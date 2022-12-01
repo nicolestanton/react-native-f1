@@ -1,20 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import axios from 'axios'
+import { NativeBaseProvider, Box } from "native-base";
 
-export default function App() {
+
+import ProfileScreen from './Pages/ProfileScreen';
+import HomeScreen from './Pages/HomeScreen';
+
+const Stack = createNativeStackNavigator();
+
+const App = () => {
+  const [data, setData] = useState()
+
+  useEffect(() => {
+    const baseURL = "http://ergast.com/api/f1/2022/drivers";
+    axios.get(`${baseURL}`).then((response) => setData(response.json));
+  }, []);
+
+  // console.log(data)
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: 'Welcome' }}
+        />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+      </Stack.Navigator>
+    </NavigationContainer>
+
+  );
+};
+
+export default App;
